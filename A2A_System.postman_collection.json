@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "A2A Banking System - Google Gemini ADK",
+    "_postman_id": "a2a-banking-system-collection-003",
+    "description": "Complete Postman collection for testing A2A Orchestrator, Spending Agent, and Trip Planner Agent (Google ADK + FastAPI).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Main Orchestrator (Port 8100)",
+      "item": [
+        {
+          "name": "Chat → Trip Planning",
+          "request": {
+            "method": "POST",
+            "url": "http://127.0.0.1:8100/chat",
+            "query": [
+              { "key": "query", "value": "plan a trip from Goa to Delhi for 3 days" }
+            ]
+          }
+        },
+        {
+          "name": "Chat → Spending Analysis",
+          "request": {
+            "method": "POST",
+            "url": "http://127.0.0.1:8100/chat",
+            "query": [
+              { "key": "query", "value": "show my spending for user_123" }
+            ]
+          }
+        },
+        {
+          "name": "Chat → Investment Advice",
+          "request": {
+            "method": "POST",
+            "url": "http://127.0.0.1:8100/chat",
+            "query": [
+              { "key": "query", "value": "investment advice moderate 5000" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Remote Spending Agent (Port 8101)",
+      "item": [
+        {
+          "name": "A2A Endpoint (Spending)",
+          "request": {
+            "method": "POST",
+            "url": "http://127.0.0.1:8101/a2a",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"get spending for user_123\"}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Direct GET → calc-spending (Debug)",
+          "request": {
+            "method": "GET",
+            "url": "http://127.0.0.1:8101/calc-spending"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Remote Trip Planner Agent (Port 8102)",
+      "item": [
+        {
+          "name": "A2A Endpoint (Trip Planning)",
+          "request": {
+            "method": "POST",
+            "url": "http://127.0.0.1:8102/a2a",
+            "body": {
+              "mode": "raw",
+              "raw": "{\"query\": \"plan a trip from Bangalore to Goa for 4 days under 20000\"}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "Direct GET → calc-trip (Debug)",
+          "request": {
+            "method": "GET",
+            "url": "http://127.0.0.1:8102/calc-trip"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "a2a-banking-system",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A2A Banking System with Google ADK",
+  "scripts": {
+    "start:orchestrator": "node root_orchestrator/index.js",
+    "start:spending": "node remote_spending/index.js",
+    "start:trip": "node remote_trip/index.js",
+    "start:all": "concurrently \"npm run start:orchestrator\" \"npm run start:spending\" \"npm run start:trip\""
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "node-fetch": "^3.3.0",
+    "@google-adk-js/core": "^0.1.0",
+    "@google-adk-js/adapters": "^0.1.0"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

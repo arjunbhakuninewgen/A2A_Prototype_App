@@ -1,227 +1,241 @@
-# A2A – Agent-to-Agent Microservices System  
-A lightweight demonstration of an **Agent-to-Agent (A2A)** architecture using **FastAPI** microservices.
+# 🚀 A2A Banking Microservices System (Google Gemini ADK)
 
----
+This project demonstrates a **full Agent-to-Agent (A2A) microservice architecture** using:
 
-# 📌 What is A2A (Agent-to-Agent)?
-A2A stands for **Agent-to-Agent** communication.  
-It means:
+- **Google Gemini 2.0 Flash**
+- **Google ADK A2A protocol**
+- **Remote A2A Agents (microservices)**
+- **FastAPI**
+- **Uvicorn**
 
-- One service (agent) can communicate with another service (agent).
-- Each agent performs a specific job.
-- The main orchestrator agent decides which other agents should be called.
-- The system becomes modular, scalable, and easy to extend.
-
-### ✔ Why A2A?
-- Microservice-level autonomy  
-- Each agent can run independently  
-- Parallel / distributed processing  
-- Scalable architecture for enterprise workflows  
-
----
-
-# 📦 Project Overview
-
-This project contains **3 FastAPI microservices**:
+This repo contains **three agents**:
 
 | Service | Port | Description |
 |--------|------|-------------|
-| **Main A2A Orchestrator** | `8100` | Receives user request → calls other agents |
-| **Remote Spending Service** | `8101` | Calculates / validates spending details |
-| **Remote Trip Service** | `8102` | Calculates / validates trip details |
+| 🧠 Main Orchestrator Agent | **8100** | Calls all other agents and provides final answers |
+| 💸 Spending Analysis Agent | **8101** | Provides structured spending summaries |
+| 🧳 Trip Planner Agent | **8102** | Provides itinerary planning and travel suggestions |
+
+Each agent is a **Google ADK Agent** exposed through an **A2A endpoint**, making this a complete microservice-based LLM system.
 
 ---
 
-# 🏗 Architecture Diagram
+# 🔍 What is A2A (Agent-to-Agent)?
 
-           ┌─────────────────────┐
-           │    User / Client    │
-           └──────────┬──────────┘
-                      │
-                      ▼
-           ┌─────────────────────┐
-           │  Main A2A Service   │  (8100)
-           │  Orchestrator Agent │
-           └──────────┬──────────┘
-    ┌─────────────────┴─────────────────┐
-    │                                   │
-    ▼                                   ▼
-┌──────────────────────┐ ┌──────────────────────┐
-│ Remote Spending Agent │ │ Remote Trip Agent │
-│ (8101) │ │ (8102) │
-└──────────────────────┘ └──────────────────────┘
+A2A = **Agent-to-Agent communication protocol**, allowing AI agents to talk to each other through:
 
+- Typed structured messages  
+- Standardized API endpoints  
+- Automatic tool routing  
+- Automatic agent card discovery  
+- Zero custom HTTP code
 
+In this project:
 
----
+- The **main agent** orchestrates work
+- The **remote agents** expose their capabilities through `/a2a`
+- The orchestrator invokes them using **RemoteA2aAgent**
 
-# 🚀 How the System Works (Flow)
-
-### **Example: Process Total Request**
-User hits:
-
-GET http://127.0.0.1:8100/process-total
-
-
-
-Main Orchestrator:
-
-1. Calls **remote_spending** service  
-   → `/calc-spending`
-
-2. Calls **remote_trip** service  
-   → `/calc-trip`
-
-3. Combines both  
-4. Returns final JSON
+This mirrors real-world banking architectures:
+- Spending engine microservice  
+- Travel engine microservice  
+- Central advisor orchestrator  
 
 ---
 
-# 📂 Folder Structure
+# 🏗️ Architecture
+
+                      ┌─────────────────────┐
+                      │     User / Client    │
+                      └───────────┬──────────┘
+                                  │ Query
+                                  ▼
+                    ┌────────────────────────────┐
+                    │   Main Orchestrator Agent   │ (8100)
+                    │    portfolio_orchestrator   │
+                    └──────────┬───────────┬──────┘
+                               │           │
+                A2A Call       │           │      A2A Call
+                               ▼           ▼
+      ┌─────────────────────────────┐    ┌────────────────────────┐
+      │   Remote Spending Agent     │    │   Remote Trip Agent     │
+      │  spending_agent (8101)      │    │ trip_planner_agent (8102)│
+      └─────────────────────────────┘    └────────────────────────┘
+
+---
+
+# 📂 Project Structure
 
 A2A_Testing/
 │
-├── init.py
-├── agent.py → Main A2A orchestrator (8100)
+├── agent.py # Main Orchestrator Agent (8100)
 │
 ├── remote_spending/
-│ ├── init.py
-│ └── agent.py → Spending service (8101)
+│ ├── agent.py # Spending A2A microservice (8101)
+│ └── init.py
 │
-└── remote_trip/
-├── init.py
-└── agent.py → Trip service (8102)
-
-
----
-
-# ⚙ Installation
-
-### **1. Install Python dependencies**
-
-pip install fastapi uvicorn requests
-
----
-
-# ▶ How to Run All Services
-
-Before running, set PYTHONPATH:
-
-### **Windows PowerShell**
-
-
-
----
-
-## **1. Start Remote Spending (8101)**
-
-uvicorn A2A_Testing.remote_spending.agent:a2a_app --host 127.0.0.1 --port 8101
-
-shell
-Copy code
-
-## **2. Start Remote Trip (8102)**
-
-uvicorn A2A_Testing.remote_trip.agent:a2a_app --host 127.0.0.1 --port 8102
-
-shell
-Copy code
-
-## **3. Start Main Orchestrator (8100)**
-
-uvicorn A2A_Testing.agent:a2a_app --host 127.0.0.1 --port 8100
+├── remote_trip/
+│ ├── agent.py # Trip planner A2A microservice (8102)
+│ └── init.py
+│
+└── README.md
 
 yaml
 Copy code
 
 ---
 
-# 🧪 Testing Endpoints
+# 🛠 Installation
 
-### ✔ Spending Service (direct)
-GET http://127.0.0.1:8101/calc-spending
-
-shell
-Copy code
-
-### ✔ Trip Service (direct)
-GET http://127.0.0.1:8102/calc-trip
+### 1️⃣ Install dependencies
+pip install fastapi uvicorn google-genai google-adk
 
 shell
 Copy code
 
-### ✔ Main → Spending
-GET http://127.0.0.1:8100/spending
+### 2️⃣ Set your Gemini API key
+setx GOOGLE_API_KEY "YOUR_API_KEY_HERE"
 
-shell
+yaml
 Copy code
 
-### ✔ Main → Trip
-GET http://127.0.0.1:8100/trip
-
-shell
-Copy code
-
-### ✔ Main → Process Total (calls both agents)
-GET http://127.0.0.1:8100/process-total
+Or in PowerShell:
+$env:GOOGLE_API_KEY="YOUR_API_KEY_HERE"
 
 yaml
 Copy code
 
 ---
 
-# 📊 Example JSON Responses
+# ▶ Running All Agents
 
-### Spending Service
-```json
-{
-  "status": "ok",
-  "spending": 1200
-}
-Trip Service
-json
-Copy code
-{
-  "status": "ok",
-  "trip_cost": 450
-}
-Combined Output
-json
-Copy code
-{
-  "spending": 1200,
-  "trip_cost": 450,
-  "total": 1650
-}
-🧪 Automated Test Script
-Run:
+Before running anything:
 
-nginx
+$env:PYTHONPATH = "F:\a2abankingsystem"
+
+yaml
 Copy code
+
+---
+
+### **1. Start Spending Agent (8101)**
+
+uvicorn A2A_Testing.remote_spending.agent:a2a_app --port 8101
+
+shell
+Copy code
+
+### **2. Start Trip Agent (8102)**
+
+uvicorn A2A_Testing.remote_trip.agent:a2a_app --port 8102
+
+shell
+Copy code
+
+### **3. Start Main Orchestrator (8100)**
+
+uvicorn A2A_Testing.agent:a2a_app --port 8100
+
+yaml
+Copy code
+
+---
+
+# 🧪 Testing the System
+
+### **Orchestrator chat endpoint**
+POST http://127.0.0.1:8100/chat?query=plan+my+trip+from+Goa+to+Delhi
+
+markdown
+Copy code
+
+### **Ask about spending**
+POST http://127.0.0.1:8100/chat?query=show+my+spending+user_123
+
+markdown
+Copy code
+
+### **Ask for investment advice**
+POST http://127.0.0.1:8100/chat?query=investment+advice+moderate+5000
+
+yaml
+Copy code
+
+---
+
+# 🧰 Supported Workflows
+
+### ✔ Budget & Spending  
+Main agent → remote_spending_agent → returns structured category totals
+
+### ✔ Trip Planning  
+Main agent → remote_trip_planner_agent → returns full itinerary
+
+### ✔ Investment Advisory  
+Main agent → local tool → returns portfolio allocation
+
+---
+
+# 📦 Tools & Agents Summary
+
+### 🌐 Remote Agents
+- `/a2a` endpoint auto-generated via `to_a2a()`
+- Standard A2A card discovery
+- Structured JSON responses
+
+### 🛠 Local Tool
+`simple_portfolio_recommendation(risk, amount)`
+
+---
+
+# 📮 Postman Collection
+
+A ready-to-import JSON file is included below.
+
+---
+
+# 🧪 Auto Testing Script (optional)
+
 python a2a_auto_test.py
-This validates:
 
-All servers are running
-
-JSON responses are valid
-
-Total = spending + trip_cost
-
-📦 Postman Collection
-Import the included:
-
-pgsql
+yaml
 Copy code
-A2A_System.postman_collection.json
-🎯 Summary
-This A2A demo shows:
 
-Multi-agent microservice orchestration
+Validates:
+- all agents alive  
+- JSON responses valid  
+- orchestrator routing correct  
 
-FastAPI distributed architecture
+---
 
-Service-to-service communication
+# 🎯 Summary
 
-Scalable modular design
+This project demonstrates:
 
+- Multi-agent orchestration  
+- A2A microservice patterns  
+- Google Gemini reasoning + tools  
+- Realistic banking/fintech workflows  
+- Highly modular system for future agents  
+- 100% production-style architecture  
 
+You can easily extend with:
+- Fraud detection agent  
+- EMI calculator agent  
+- Credit risk agent  
+- Personal finance advice agent  
+- Bill payment agent  
+
+---
+
+# 🙌 Need More?
+
+I can generate:
+
+✔ Docker-compose (all agents runnable with one command)  
+✔ Swagger UI for each service  
+✔ Frontend UI for your A2A system  
+✔ Logging + monitoring setup  
+✔ More agents (loans, credit card, fraud)  
+
+Just ask!
